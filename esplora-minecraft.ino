@@ -1,20 +1,20 @@
 #include <Esplora.h>
 
-int JoyX;                                        // Global
-int JoyY;
-int activate = 0;
-int oldSliderVal;
+int JoyX;                                        // Drift value X
+int JoyY;                                        // Drift value Y
+int activate = 0;                                // Is controller activated
+int oldSliderVal;                                // Slider val from last loop()
 
 void setup()
 {
-  Esplora.writeRGB(10, 0, 0);                   // Signal Esplora is waiting to calibrate
+  Esplora.writeRGB(10, 0, 0);                    // Signal Esplora is waiting to calibrate
   int start = Esplora.readButton(SWITCH_3);      // Read First Button
   while(start == HIGH) {                         // Wait until button is pressed
     start = Esplora.readButton(SWITCH_3);
   }
   JoyX = Esplora.readJoystickX();                // Set drift variable X
   JoyY = Esplora.readJoystickY();                // Set drift variable Y
-  Esplora.writeRGB(10, 10, 10);                   // Calibration is done, waiting to run
+  Esplora.writeRGB(10, 10, 10);                  // Calibration is done, waiting to run
 } 
 
 void loop()
@@ -28,8 +28,7 @@ void loop()
   int button2 = Esplora.readButton(SWITCH_2);    // Read Buttons
   int button3 = Esplora.readButton(SWITCH_3);    // Read Buttons
   int button4 = Esplora.readButton(SWITCH_4);    // Read Buttons
-  int slide = 0;//Esplora.readSlider();              // Read Slider Values
-  int sliderVal; 
+  int slide = 0;  //Esplora.readSlider();        // Hack-ish mouse speed fix
 
   int mousespeed = map(slide, 0, 1023, 10, 0);                  // Max Mouse Speed is Calculated from slider
   int mouseX = map( xValue,-512, 512, mousespeed, -mousespeed);  // map the X value to a range of movement for the mouse X, Changes input range to include new values
@@ -38,12 +37,16 @@ void loop()
   if(button3 == LOW){                          // Check if the Enable/Disable button is pressed
     if(activate == 1) activate = 0;
     else activate = 1;
-    JoyX = Esplora.readJoystickX();                // Set drift variable X
-    JoyY = Esplora.readJoystickY();                // Set drift variable Y
+    JoyX = Esplora.readJoystickX();                // Reset the drift variable X
+    JoyY = Esplora.readJoystickY();                // Reset the drift variable Y
     delay(500);
   }
-  //if(currentSliderVal
-
+  
+  int sliderVal = Esplora.readSlider();                        // Read Slider Values
+  if(oldSliderVal != sliderVal){
+    oldSliderVal == map(sliderVal, 0, 1023, 0, 10);            // Map slider to number keys
+    Keyboard.print(String(oldSliderVal));                      // Print the correct number key
+  }
 
   if(activate == 1){                               // Check if mouse is enabled
 
