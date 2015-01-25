@@ -28,7 +28,7 @@ void loop()
   int button2 = Esplora.readButton(SWITCH_2);    // Read Buttons
   int button3 = Esplora.readButton(SWITCH_3);    // Read Buttons
   int button4 = Esplora.readButton(SWITCH_4);    // Read Buttons
-  int slide = 0;  //Esplora.readSlider();        // Hack-ish mouse speed fix
+  int slide = 200;  //Esplora.readSlider();        // Hack-ish mouse speed fix
 
   int mousespeed = map(slide, 0, 1023, 10, 0);                  // Max Mouse Speed is Calculated from slider
   int mouseX = map( xValue,-512, 512, mousespeed, -mousespeed);  // map the X value to a range of movement for the mouse X, Changes input range to include new values
@@ -61,20 +61,26 @@ void loop()
 
   if(activate == 1){                               // Check if mouse is enabled
 
-    Esplora.writeRGB(0 , 0, 10 );                 // Set light to blue
+    Esplora.writeRGB(0 , 0, 10 );                  // Set light to blue
     Mouse.begin();                                 // Take control of the mouse
 
-    if(JoyButton == LOW) Keyboard.press(32);
+    if(JoyButton == LOW) Keyboard.press(32);       // Jump (space)
     else Keyboard.release(32);
+    
+    if(Esplora.readMicrophone() > 10) Keyboard.write(KEY_ESC); // Menu
+    else Keyboard.release(KEY_ESC);
 
-    if(button2 == LOW) Mouse.press(MOUSE_LEFT);       // Test if Left click is activated
+    if(button2 == LOW) Mouse.press(MOUSE_LEFT);        // Test if Left click is activated
     else Mouse.release(MOUSE_LEFT);
 
-    if(button1 == LOW) Keyboard.press(119);                             // Forward (W)    
+    if(button1 == LOW) Keyboard.press(119);            // Forward (W)    
     else Keyboard.release(119);
 
     if(button4 == LOW)  Mouse.press(MOUSE_RIGHT);      // Right Button
     else Mouse.release(MOUSE_RIGHT);
+
+    if(Esplora.readLightSensor() < 800) Keyboard.press(32);
+    else Keyboard.release(32);
 
     Mouse.move(mouseX, mouseY, 0);                 // Move the mouse
 
