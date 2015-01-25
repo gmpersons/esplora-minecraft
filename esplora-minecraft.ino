@@ -3,7 +3,7 @@
 int JoyX;                                        // Drift value X
 int JoyY;                                        // Drift value Y
 int activate = 0;                                // Is controller activated
-int oldSliderVal;                                // Slider val from last loop()
+int oldSliderVal = 0;                                // Slider val from last loop()
 
 void setup()
 {
@@ -42,10 +42,21 @@ void loop()
     delay(500);
   }
   
-  int sliderVal = Esplora.readSlider();                        // Read Slider Values
+  int sliderVal = map(Esplora.readSlider(), 0, 1023, 10, 0);                        // Read Slider Values
   if(oldSliderVal != sliderVal){
-    oldSliderVal == map(sliderVal, 0, 1023, 0, 10);            // Map slider to number keys
-    Keyboard.print(String(oldSliderVal));                      // Print the correct number key
+    if(sliderVal == 10){
+      Keyboard.write(101);                                    // Open menu ("e" key) 
+    }
+    else if(oldSliderVal == 10){
+      Keyboard.write(101);
+    }
+    else {
+      Keyboard.print(String(oldSliderVal));                      // Print the correct number key
+    }
+    oldSliderVal = sliderVal;
+    //Serial.println(oldSliderVal);  // Debug
+    //Serial.println(sliderVal);     // Debug
+    //delay(10);                     // Debug
   }
 
   if(activate == 1){                               // Check if mouse is enabled
@@ -74,7 +85,7 @@ void loop()
     Esplora.writeRGB(255, 0, 0 );  
   }
   
-  delay(10);                                  // A short delay before moving again
+  delay(5);                                  // A short delay before moving again
 
 }
 
